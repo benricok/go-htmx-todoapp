@@ -1,0 +1,30 @@
+version: "3.9"
+services:
+  app:
+    build:
+      dockerfile: Dockerfile
+      context: .
+      target: dev
+    volumes:
+      - .:/opt/app/server
+    ports:
+      - 8080:8080
+
+  postgres_db:
+    image: postgres:14-alpine
+    container_name: postgres-db 
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_USER=todoapp
+      - POSTGRES_PASSWORD=todoapp123
+      - POSTGRES_DB=todo
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_db:/var/lib/postgresql/data
+
+volumes:
+  postgres_db:
+    driver: local

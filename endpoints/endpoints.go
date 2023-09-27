@@ -11,7 +11,7 @@ import (
 )
 
 type Header struct {
-    Title string
+	Title string
 }
 
 type Nav struct {
@@ -20,18 +20,18 @@ type Nav struct {
 
 type Userdata struct {
 	Username string
-	Name 	 string
+	Name     string
 	Surname  string
-	Email 	 string
+	Email    string
 }
 
 type Page struct {
 	Header
 	Nav
-	Userdata 
+	Userdata
 }
 
-func LoadUserDataFromCookie(c echo.Context) (*Userdata) {
+func LoadUserDataFromCookie(c echo.Context) *Userdata {
 	cookie, err := c.Cookie("user")
 	if err != nil {
 		log.Printf("Could not get cookie from request: %+v", err)
@@ -39,12 +39,15 @@ func LoadUserDataFromCookie(c echo.Context) (*Userdata) {
 	}
 
 	user, err := database.GetUser(cookie.Value)
+	if err != nil {
+		log.Printf("Could not get user from database: %+v", err)
+	}
 
 	return &Userdata{
 		Username: user.Username,
-		Name: user.Name,
-		Surname: user.Surname,
-		Email: user.Email,
+		Name:     user.Name,
+		Surname:  user.Surname,
+		Email:    user.Email,
 	}
 }
 
@@ -97,4 +100,3 @@ func HandleHelp(c echo.Context) error {
 		},
 	})
 }
-

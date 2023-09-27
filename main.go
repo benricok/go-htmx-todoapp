@@ -5,7 +5,6 @@ import (
 	"go-htmx/auth"
 	"go-htmx/database"
 	"go-htmx/endpoints"
-	"go-htmx/user"
 	"html/template"
 	"log"
 	"os"
@@ -48,10 +47,10 @@ func main() {
 		log.Fatalf("Could not init db: %+v", err)
 	}
 
-	err = database.AddUser(user.LoadTestUser())
-	if err != nil {
-		log.Fatalf("Could not add user: %+v", err)
-	}
+	//err = database.AddUser(user.LoadTestUser())
+	//if err != nil {
+	//	log.Fatalf("Could not add user: %+v", err)
+	//}
 
 	user, err := database.GetUser("test")
 	if err != nil {

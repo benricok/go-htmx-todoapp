@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	"go-htmx/auth"
-	"go-htmx/database"
-	"go-htmx/endpoints"
+	"go-htmx/internal/auth"
+	"go-htmx/internal/db"
+	"go-htmx/internal/endpoints"
+	"go-htmx/internal/user"
 	"html/template"
 	"log"
 	"os"
@@ -42,30 +43,29 @@ func main() {
 		db_url = GetDBcredentials()
 	}
 
-	err := database.NewDatabase(db_url)
+	err := db.NewDatabase(db_url)
 	if err != nil {
 		log.Fatalf("Could not init db: %+v", err)
 	}
 
-	//err = database.AddUser(user.LoadTestUser())
-	//if err != nil {
-	//	log.Fatalf("Could not add user: %+v", err)
-	//}
-
-	user, err := database.GetUser("test")
-	if err != nil {
-		log.Fatalf("could not get user: %+v", err)
+	u, _ := db.GetUser("test")
+	if u.Username == "" {
+		err = db.AddUser(user.LoadTestUser())
+		if err != nil {
+			log.Fatalf("Could not add user: %+v", err)
+		}
 	}
-	print(user.Username)
+	print(u.Username)
 
 	tmpl, err := template.ParseFiles(
-		"./public/login.html",
-		"./public/header.html",
-		"./public/nav.html",
-		"./public/home.html",
-		"./public/help.html",
-		"./public/settings.html",
-		"./public/usermng.html",
+		"./web/public/login.html",
+		"./web/public/header.html",
+		"./web/public/nav.html",
+		"./web/public/home.html",
+		"./web/public/help.html",
+		"./web/public/settings.html",
+		"./web/public/usermng.html",
+		"./web/public/signup.html",
 	)
 
 	if err != nil {
@@ -80,9 +80,10 @@ func main() {
 
 	e.GET("/", endpoints.HandleIndex)
 	e.GET("/css/style.css", func(c echo.Context) error {
-		return c.File("./public/css/style.css")
+		return c.File("./web/public/css/style.css")
 	})
 	e.GET("/login", endpoints.HandleLoginForm)
+	e.GET("/signup", endpoints.HandleSignup)
 	e.POST("/login", endpoints.Login)
 	e.GET("/logout", endpoints.Logout)
 

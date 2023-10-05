@@ -18,4 +18,3 @@ type Item struct {
 	Created   CustomTime `json:"datecreated,omitempty"`
 	Completed CustomTime `json:"datecompleted,omitempty"`
 }
-

@@ -1,18 +1,24 @@
 version: "3.9"
 services:
   app:
-    build:
-      dockerfile: Dockerfile
-      context: .
-      target: dev
+    #build:
+    #  dockerfile: Dockerfile
+    #  context: .
+    #  target: dev
+    image: cosmtrek/air
+    container_name: go-server
+    working_dir: /server
     volumes:
-      - .:/opt/app/server
+      - .:/server
+    env_file:
+      - ./.env
     environment:
-      - POSTGRES_HOST=postgres_db
-      - POSTGRES_USER=todoapp
-      - POSTGRES_PASSWORD=todoapp123
-      - POSTGRES_DB=todo
-      - POSTGRES_PORT=5432
+      GOFLAGS: "-buildvcs=false"
+      POSTGRES_HOST: ${POSTGRES_HOST:-postgres_db} #postgres_db
+      POSTGRES_USER: ${POSTGRES_USER:-todoapp} #todoapp
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-todoapp123} #todoapp123
+      POSTGRES_DB: ${POSTGRES_DB:-todo} #todo
+      POSTGRES_PORT: ${POSTGRES_PORT:-5432} #5432
     ports:
       - 8080:8080
 
@@ -21,11 +27,11 @@ services:
     container_name: postgres-db 
     restart: unless-stopped
     env_file:
-      - .env
+      - ./.env
     environment:
-      - POSTGRES_USER=todoapp
-      - POSTGRES_PASSWORD=todoapp123
-      - POSTGRES_DB=todo
+      POSTGRES_USER: ${POSTGRES_USER:-todoapp} #todoapp
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-todoapp123} #todoapp123
+      POSTGRES_DB: ${POSTGRES_DB:-todo} #todo
     ports:
       - 5432:5432
     volumes:
